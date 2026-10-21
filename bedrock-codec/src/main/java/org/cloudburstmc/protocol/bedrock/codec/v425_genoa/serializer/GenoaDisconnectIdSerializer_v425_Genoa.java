@@ -5,12 +5,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
 import org.cloudburstmc.protocol.bedrock.codec.BedrockPacketSerializer;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem1;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem2;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem3;
+import org.cloudburstmc.protocol.bedrock.data.GenoaBlockDropReward;
+import org.cloudburstmc.protocol.bedrock.data.GenoaRewardSummaryItem;
+import org.cloudburstmc.protocol.bedrock.data.GenoaRewardedItem;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaDisconnectIdPacket;
-
-import java.util.LinkedList;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GenoaDisconnectIdSerializer_v425_Genoa implements BedrockPacketSerializer<GenoaDisconnectIdPacket> {
@@ -22,15 +20,15 @@ public class GenoaDisconnectIdSerializer_v425_Genoa implements BedrockPacketSeri
     public void serialize(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectIdPacket packet) {
         this.writeStreamIds(buffer, packet);
 
-        helper.writeArray(buffer, packet.getKilledMobs(), ByteBuf::writeIntLE, this::writeDisconnectItem1);
-        helper.writeArray(buffer, packet.getRewardedItems(), this::writeDisconnectItem2);
+        helper.writeArray(buffer, packet.getRewardSummary(), ByteBuf::writeIntLE, this::writeRewardSummaryItem);
+        helper.writeArray(buffer, packet.getRewardedItems(), this::writeRewardedItem);
 
         buffer.writeIntLE((int) packet.getPlayerRuntimeId());
         helper.writeArray(buffer, packet.getRewardedTokens(), helper::writeUuid);
         helper.writeArray(buffer, packet.getBrokenBlocks(), helper::writeString);
 
         buffer.writeIntLE((int) packet.getUInt2());
-        helper.writeArray(buffer, packet.getDisconnectItems3(), this::writeDisconnectItem3);
+        helper.writeArray(buffer, packet.getBlockDropRewards(), this::writeBlockDropReward);
 
         buffer.writeIntLE(packet.getSInt1());
         buffer.writeBoolean(packet.isHasDied());
@@ -40,47 +38,46 @@ public class GenoaDisconnectIdSerializer_v425_Genoa implements BedrockPacketSeri
     public void deserialize(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectIdPacket packet) {
         this.readStreamIds(buffer, packet);
 
-        LinkedList<GenoaDisconnectItem1> killedMobs = new LinkedList<>();
-        helper.readArray(buffer, packet.getKilledMobs(), ByteBuf::readIntLE, this::readDisconnectItem1);
-        helper.readArray(buffer, packet.getRewardedItems(), this::readDisconnectItem2);
+        helper.readArray(buffer, packet.getRewardSummary(), ByteBuf::readIntLE, this::readRewardSummaryItem);
+        helper.readArray(buffer, packet.getRewardedItems(), this::readRewardedItem);
 
         packet.setPlayerRuntimeId(buffer.readUnsignedIntLE());
         helper.readArray(buffer, packet.getRewardedTokens(), helper::readUuid);
         helper.readArray(buffer, packet.getBrokenBlocks(), helper::readString);
 
         packet.setUInt2(buffer.readUnsignedIntLE());
-        helper.readArray(buffer, packet.getDisconnectItems3(), this::readDisconnectItem3);
+        helper.readArray(buffer, packet.getBlockDropRewards(), this::readBlockDropReward);
 
         packet.setSInt1(buffer.readIntLE());
         packet.setHasDied(buffer.readBoolean());
     }
 
-    protected GenoaDisconnectItem1 readDisconnectItem1(ByteBuf buffer, BedrockCodecHelper helper) {
-        return new GenoaDisconnectItem1(buffer.readUnsignedIntLE(), buffer.readIntLE(), helper.readUuid(buffer));
+    protected GenoaRewardSummaryItem readRewardSummaryItem(ByteBuf buffer, BedrockCodecHelper helper) {
+        return new GenoaRewardSummaryItem(buffer.readUnsignedIntLE(), buffer.readIntLE(), helper.readUuid(buffer));
     }
 
-    protected void writeDisconnectItem1(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectItem1 item) {
-        buffer.writeIntLE((int) item.getUint1());
-        buffer.writeIntLE(item.getSint1());
-        helper.writeUuid(buffer, item.getUuid1());
+    protected void writeRewardSummaryItem(ByteBuf buffer, BedrockCodecHelper helper, GenoaRewardSummaryItem item) {
+        buffer.writeIntLE((int) item.getRewardType());
+        buffer.writeIntLE(item.getAmount());
+        helper.writeUuid(buffer, item.getItemUuid());
     }
 
-    protected GenoaDisconnectItem2 readDisconnectItem2(ByteBuf buffer, BedrockCodecHelper helper) {
-        return new GenoaDisconnectItem2(helper.readUuid(buffer), buffer.readUnsignedIntLE());
+    protected GenoaRewardedItem readRewardedItem(ByteBuf buffer, BedrockCodecHelper helper) {
+        return new GenoaRewardedItem(helper.readUuid(buffer), buffer.readUnsignedIntLE());
     }
 
-    protected void writeDisconnectItem2(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectItem2 item) {
-        helper.writeUuid(buffer, item.getUuid1());
-        buffer.writeIntLE((int) item.getUint1());
+    protected void writeRewardedItem(ByteBuf buffer, BedrockCodecHelper helper, GenoaRewardedItem item) {
+        helper.writeUuid(buffer, item.getItemUuid());
+        buffer.writeIntLE((int) item.getCount());
     }
 
-    protected GenoaDisconnectItem3 readDisconnectItem3(ByteBuf buffer, BedrockCodecHelper helper) {
-        return new GenoaDisconnectItem3(helper.readUuid(buffer), buffer.readIntLE());
+    protected GenoaBlockDropReward readBlockDropReward(ByteBuf buffer, BedrockCodecHelper helper) {
+        return new GenoaBlockDropReward(helper.readUuid(buffer), buffer.readIntLE());
     }
 
-    protected void writeDisconnectItem3(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectItem3 item) {
-        helper.writeUuid(buffer, item.getUuid1());
-        buffer.writeIntLE(item.getInt1());
+    protected void writeBlockDropReward(ByteBuf buffer, BedrockCodecHelper helper, GenoaBlockDropReward item) {
+        helper.writeUuid(buffer, item.getItemUuid());
+        buffer.writeIntLE(item.getCount());
     }
 
     protected void readStreamIds(ByteBuf buffer, GenoaDisconnectIdPacket packet) {

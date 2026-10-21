@@ -5,7 +5,7 @@ import lombok.Value;
 import java.util.UUID;
 
 @Value
-public class GenoaDisconnectItem2 {
-    private UUID uuid1;
-    private long uint1;
+public class GenoaRewardedItem {
+    private UUID itemUuid;
+    private long count;
 }

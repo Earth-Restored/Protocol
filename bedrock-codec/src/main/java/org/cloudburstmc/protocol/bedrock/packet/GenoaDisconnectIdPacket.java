@@ -4,9 +4,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem1;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem2;
-import org.cloudburstmc.protocol.bedrock.data.GenoaDisconnectItem3;
+import org.cloudburstmc.protocol.bedrock.data.GenoaBlockDropReward;
+import org.cloudburstmc.protocol.bedrock.data.GenoaRewardSummaryItem;
+import org.cloudburstmc.protocol.bedrock.data.GenoaRewardedItem;
 import org.cloudburstmc.protocol.common.PacketSignal;
 
 import java.util.List;
@@ -25,14 +25,14 @@ public class GenoaDisconnectIdPacket implements BedrockPacket {
     private long smeltingStreamVersion;
     private long tokensStreamVersion;
 
-    private List<GenoaDisconnectItem1> killedMobs = new ObjectArrayList<>(); // Not sure
-    private List<GenoaDisconnectItem2> rewardedItems = new ObjectArrayList<>(); // Not sure
+    private List<GenoaRewardSummaryItem> rewardSummary = new ObjectArrayList<>();
+    private List<GenoaRewardedItem> rewardedItems = new ObjectArrayList<>();
 
     private long playerRuntimeId; // Not sure
     private List<UUID> rewardedTokens = new ObjectArrayList<>(); // Not sure
     private List<String> brokenBlocks = new ObjectArrayList<>(); // Not sure
     private long uInt2;
-    private List<GenoaDisconnectItem3> disconnectItems3 = new ObjectArrayList<>();
+    private List<GenoaBlockDropReward> blockDropRewards = new ObjectArrayList<>();
     private int sInt1;
     private boolean hasDied; // Not sure
 

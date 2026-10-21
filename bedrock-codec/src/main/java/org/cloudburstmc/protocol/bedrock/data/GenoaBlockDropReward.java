@@ -5,7 +5,7 @@ import lombok.Value;
 import java.util.UUID;
 
 @Value
-public class GenoaDisconnectItem3 {
-    private UUID uuid1;
-    private int int1;
+public class GenoaBlockDropReward {
+    private UUID itemUuid;
+    private int count;
 }
