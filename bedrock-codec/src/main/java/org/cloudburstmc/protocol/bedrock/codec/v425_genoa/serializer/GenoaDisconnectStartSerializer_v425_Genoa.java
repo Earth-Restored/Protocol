@@ -13,11 +13,11 @@ public class GenoaDisconnectStartSerializer_v425_Genoa implements BedrockPacketS
 
     @Override
     public void serialize(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectStartPacket packet) {
-        buffer.writeByte(packet.getByte1());
+        buffer.writeByte(packet.getDisconnectReason());
     }
 
     @Override
     public void deserialize(ByteBuf buffer, BedrockCodecHelper helper, GenoaDisconnectStartPacket packet) {
-        packet.setByte1(buffer.readByte());
+        packet.setDisconnectReason(buffer.readByte());
     }
 }

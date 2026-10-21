@@ -9,7 +9,7 @@ import org.cloudburstmc.protocol.common.PacketSignal;
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString(doNotUseGetters = true)
 public class GenoaDisconnectStartPacket implements BedrockPacket {
-    public byte Byte1;
+    private byte disconnectReason;
 
     @Override
     public final PacketSignal handle(BedrockPacketHandler handler) {
